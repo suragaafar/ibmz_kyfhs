@@ -38,7 +38,7 @@ export default function App() {
 					{renderPage()}
 				</main>
 				<footer className="mx-auto max-w-7xl px-4 pb-8 text-xs text-slate-500 sm:px-6 lg:px-8">
-					AquaGuard AI is a mock hackathon prototype with no real data connections yet.
+					AquaGuard AI uses live weather, advisories, and community signals with transparent sources.
 				</footer>
 			</div>
 		</UserAuthProvider>

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAlertSignal } from '../services/alertsService.js';
+import { getWeatherSignal } from '../services/weatherService.js';
 
 const router = Router();
 
@@ -11,10 +11,10 @@ router.get('/signal', async function (req, res, next) {
       return res.status(400).json({ message: 'location is required' });
     }
 
-    const signal = await getAlertSignal(location);
+    const signal = await getWeatherSignal(location);
 
     if (!signal) {
-      return res.status(404).json({ message: 'No alert coordinates available for this location' });
+      return res.status(404).json({ message: 'No weather coordinates available for this location' });
     }
 
     return res.json(signal);

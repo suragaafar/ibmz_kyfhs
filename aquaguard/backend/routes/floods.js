@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAlertSignal } from '../services/alertsService.js';
+import { getFloodSignal } from '../services/floodService.js';
 
 const router = Router();
 
@@ -11,12 +11,7 @@ router.get('/signal', async function (req, res, next) {
       return res.status(400).json({ message: 'location is required' });
     }
 
-    const signal = await getAlertSignal(location);
-
-    if (!signal) {
-      return res.status(404).json({ message: 'No alert coordinates available for this location' });
-    }
-
+    const signal = await getFloodSignal(location);
     return res.json(signal);
   } catch (error) {
     return next(error);

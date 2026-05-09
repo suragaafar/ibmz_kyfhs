@@ -14,7 +14,7 @@ export default function Leaderboard({ users = defaultUsers }) {
 			<div className="flex items-center justify-between gap-4">
 				<div>
 					<h3 className="text-lg font-semibold text-white">Water-saving leaderboard</h3>
-					<p className="text-sm text-slate-400">Mock points for community engagement and reporting.</p>
+					<p className="text-sm text-slate-400">Community points for engagement and reporting activity.</p>
 				</div>
 				<div className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
 					Community points

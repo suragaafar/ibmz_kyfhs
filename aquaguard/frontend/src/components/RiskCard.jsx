@@ -37,7 +37,7 @@ export default function RiskCard({ risk }) {
 				<div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
 					<div className="text-xs uppercase tracking-[0.25em] text-slate-400">Confidence</div>
 					<div className="mt-2 text-3xl font-bold text-cyan-200">{risk.confidence}%</div>
-					<p className="mt-1 text-sm text-slate-400">Evidence confidence based on alerts, reports, and infrastructure context.</p>
+					<p className="mt-1 text-sm text-slate-400">Evidence confidence based on live API signals and corroborating sources.</p>
 				</div>
 
 				<div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
@@ -63,7 +63,7 @@ export default function RiskCard({ risk }) {
 									<div className="flex items-center justify-between gap-4">
 										<div>
 											<div className="font-medium text-white">{factor.label}</div>
-											<div className="text-sm text-slate-400">{factor.detail}</div>
+											<div className="text-sm text-slate-400">{factor.detail}{factor.sourceUrl ? (<><br /><a href={factor.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-300 underline">Verify source</a></>) : null}</div>
 										</div>
 										<div className="shrink-0 rounded-full bg-cyan-400/15 px-3 py-1 text-sm font-semibold text-cyan-200">
 											+{factor.score}
@@ -84,7 +84,7 @@ export default function RiskCard({ risk }) {
 									<div className="flex items-start justify-between gap-4">
 										<div>
 											<div className="font-medium text-white">{alert.title}</div>
-											<div className="text-sm text-slate-400">{alert.source} · {alert.location}</div>
+											<div className="text-sm text-slate-400">{alert.source} · {alert.location}{alert.sourceUrl ? (<> · <a href={alert.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-300 underline">Verify</a></>) : null}</div>
 										</div>
 										<span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
 											{alert.type.replace(/_/g, ' ')}

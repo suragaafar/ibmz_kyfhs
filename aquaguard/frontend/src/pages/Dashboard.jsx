@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AlertFeed from '../components/AlertFeed';
 import AISummary from '../components/AISummary';
 import RiskCard from '../components/RiskCard';
 import { calculateWaterRisk, calculateCountryRisk, isCountryQuery } from '../utils/riskEngine';
-import { municipalities } from '../data/municipalities';
+import { getAdvisorySignal } from '../api/advisoriesApi';
+import { getAlertSignal } from '../api/alertsApi';
+import { getFloodSignal } from '../api/floodsApi';
+import { getGovernmentAdvisorySignal } from '../api/govAdvisoriesApi';
+import { getWeatherSignal } from '../api/weatherApi';
+import { searchWaterNews } from '../api/newsApi';
 
 // Build autocomplete list — all cities + all unique countries
 const KNOWN_LOCATIONS = [
-        ...municipalities.map(function (m) { return m.name; }),
-        ...Array.from(new Set(municipalities.map(function (m) { return m.country; })))
+        'Windsor, ON',
+        'Tecumseh, ON',
+        'Chatham, ON',
+        'Toronto, ON',
+        'Ottawa, ON',
+        'Vancouver, BC',
+        'Montreal, QC',
+        'Calgary, AB',
+        'New York, NY',
+        'Los Angeles, CA',
+        'London, UK',
+        'Sydney, AU',
+        'Mumbai, IN',
+        'Delhi, IN',
+        'Bangalore, IN'
 ].sort();
 
 function levelColor(level) {
@@ -99,6 +117,8 @@ function CountryDashboard({ result }) {
 export default function Dashboard() {
         const [inputValue, setInputValue] = useState('');
         const [searchedLocation, setSearchedLocation] = useState('Windsor, ON');
+        const [cityRisk, setCityRisk] = useState(null);
+        const [isLoadingCityRisk, setIsLoadingCityRisk] = useState(true);
 
         function handleSearch(e) {
                 e.preventDefault();
@@ -110,7 +130,99 @@ export default function Dashboard() {
 
         const isCountry = isCountryQuery(searchedLocation);
         const countryResult = isCountry ? calculateCountryRisk(searchedLocation) : null;
-        const cityRisk = !isCountry ? calculateWaterRisk(searchedLocation) : null;
+
+        useEffect(function () {
+                let isCancelled = false;
+
+                async function loadCityRisk() {
+                        let finalRisk = null;
+
+                        if (isCountry) {
+                                setCityRisk(null);
+                                setIsLoadingCityRisk(false);
+                                return;
+                        }
+
+                        setIsLoadingCityRisk(true);
+
+                        try {
+                                const baseRisk = calculateWaterRisk(searchedLocation);
+                                
+                                // Parse city and province for news search
+                                const locationParts = searchedLocation.split(',').map(part => part.trim());
+                                const city = locationParts[0];
+                                const province = locationParts[1] || '';
+
+                                const [weatherSignal, alertSignal, advisorySignal, govAdvisorySignal, floodSignal, newsData] = await Promise.all([
+                                        getWeatherSignal(searchedLocation),
+                                        getAlertSignal(searchedLocation),
+                                        getAdvisorySignal(searchedLocation),
+                                        getGovernmentAdvisorySignal(searchedLocation),
+                                        getFloodSignal(searchedLocation),
+                                        searchWaterNews(city, province)
+                                ]);
+
+                                finalRisk = { ...baseRisk };
+
+                                const liveSignals = [weatherSignal, alertSignal, advisorySignal, govAdvisorySignal, floodSignal].filter(Boolean);
+
+                                liveSignals.forEach(function (signal) {
+                                        if (!signal.active) {
+                                                return;
+                                        }
+
+                                        finalRisk.riskScore = Math.min(
+                                                100,
+                                                finalRisk.riskScore + signal.points
+                                        );
+
+                                        finalRisk.contributingFactors = [
+                                                ...finalRisk.contributingFactors,
+                                                {
+                                                        label: signal.type.replace(/_/g, ' '),
+                                                        score: signal.points,
+                                                        detail: signal.title,
+                                                        sourceUrl: signal.sourceUrl
+                                                }
+                                        ];
+
+                                        finalRisk.activeAlerts = [
+                                                ...finalRisk.activeAlerts,
+                                                signal
+                                        ];
+
+                                        finalRisk.explanation = finalRisk.explanation + ' ' + signal.title + '.';
+                                });
+
+                                // Add news context if articles found
+                                if (newsData.articles && newsData.articles.length > 0) {
+                                        finalRisk.newsArticles = newsData.articles;
+                                        finalRisk.newsContext = `Found ${newsData.articles.length} recent news articles about water incidents in ${city}.`;
+                                }
+
+                                if (finalRisk.riskScore >= 66) {
+                                        finalRisk.riskLevel = 'Unsafe';
+                                } else if (finalRisk.riskScore >= 31) {
+                                        finalRisk.riskLevel = 'Caution';
+                                } else {
+                                        finalRisk.riskLevel = 'Safe';
+                                }
+
+                                finalRisk.status = finalRisk.riskLevel;
+                        } finally {
+                                if (!isCancelled) {
+                                        setCityRisk(finalRisk || calculateWaterRisk(searchedLocation));
+                                        setIsLoadingCityRisk(false);
+                                }
+                        }
+                }
+
+                loadCityRisk();
+
+                return function () {
+                        isCancelled = true;
+                };
+        }, [isCountry, searchedLocation]);
 
         return (
                 <div className="space-y-6">
@@ -144,6 +256,10 @@ export default function Dashboard() {
                         {/* Results */}
                         {isCountry && countryResult ? (
                                 <CountryDashboard result={countryResult} />
+                        ) : isLoadingCityRisk ? (
+                                <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-slate-400">
+                                        Loading weather and risk data for <span className="text-white">{searchedLocation}</span>...
+                                </div>
                         ) : cityRisk ? (
                                 <>
                                         <RiskCard risk={cityRisk} />
