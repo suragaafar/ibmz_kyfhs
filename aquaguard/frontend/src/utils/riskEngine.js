@@ -6,7 +6,7 @@ export function calculateWaterRisk(location) {
     location,
     riskScore: 0,
     riskLevel: 'Safe',
-    confidence: 70,
+    confidence: 40,
     contributingFactors: [],
     activeAlerts: [],
     matchingReports: [],
