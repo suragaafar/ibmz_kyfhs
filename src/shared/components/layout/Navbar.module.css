@@ -1,0 +1,133 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-primary-dark);
+  padding: var(--space-md) var(--space-xl);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo {
+  font-size: 1.5rem;
+}
+
+.brandName {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-on-primary);
+  letter-spacing: -0.02em;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--space-xl);
+  list-style: none;
+}
+
+.navLinks a {
+  color: var(--color-accent-light);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color var(--transition-fast);
+}
+
+.navLinks a:hover {
+  color: var(--color-accent);
+}
+
+.userLabel {
+  list-style: none;
+}
+
+.userEmail {
+  color: var(--color-accent-light);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: var(--color-accent-light);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0;
+}
+
+.logoutBtn:hover {
+  color: var(--color-accent);
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-on-primary);
+  font-size: 1.5rem;
+  padding: var(--space-xs);
+}
+
+@media (max-width: 640px) {
+  .menuToggle {
+    display: block;
+  }
+
+  .navLinks {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-primary-dark);
+    flex-direction: column;
+    gap: 0;
+    padding: var(--space-md) 0;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .navLinks.open {
+    display: flex;
+  }
+
+  .navLinks li a {
+    display: block;
+    padding: var(--space-sm) var(--space-xl);
+  }
+
+  .navLinks li .userEmail {
+    display: block;
+    padding: var(--space-sm) var(--space-xl);
+    max-width: none;
+  }
+
+  .navLinks li .logoutBtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: var(--space-sm) var(--space-xl);
+    text-transform: none;
+  }
+}
