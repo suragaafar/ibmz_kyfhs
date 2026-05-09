@@ -38,13 +38,6 @@ export default function Navbar({ activePage, onNavigate }) {
 						);
 					})}
 				</nav>
-
-				<button
-					onClick={() => onNavigate('dashboard')}
-					className="rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 px-4 py-2 text-sm font-semibold text-slate-950 shadow-glow transition hover:scale-[1.02]"
-				>
-					Open Dashboard
-				</button>
 			</div>
 
 			<div className="border-t border-white/5 px-4 py-3 md:hidden">
