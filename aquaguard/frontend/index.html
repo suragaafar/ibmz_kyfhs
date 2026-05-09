@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="AquaGuard AI - water health intelligence for safer communities" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							aqua: {
+								50: '#eaffff',
+								100: '#cff9ff',
+								200: '#a5f0fb',
+								300: '#67e3f2',
+								400: '#22cddf',
+								500: '#0ea5b9',
+								600: '#0f859c',
+								700: '#106877',
+								800: '#114d5a',
+								900: '#0d3843'
+							}
+						},
+						boxShadow: {
+							glow: '0 0 0 1px rgba(34, 205, 223, 0.22), 0 20px 60px rgba(15, 133, 156, 0.18)'
+						},
+						fontFamily: {
+							sans: ['Inter', 'system-ui', 'sans-serif']
+						}
+					}
+				}
+			}
+		</script>
+		<title>AquaGuard AI</title>
+		<script type="module" src="/src/main.jsx"></script>
+	</head>
+	<body>
+		<div id="root"></div>
+	</body>
+</html>
