@@ -1,4 +1,5 @@
 import express from "express";
+import { validationError } from "../lib/http.js";
 import { calculateRisk } from "../lib/riskEngine.js";
 import { generateWatsonSummary } from "../lib/watsonx.js";
 
@@ -8,9 +9,14 @@ router.get("/", async (req, res) => {
   try {
     const location = String(req.query.location || "").trim();
     if (!location) {
-      return res.status(400).json({
-        error: "location is required",
+      return validationError(req, res, "location is required", {
         example: "/summary?location=Mumbai, MH",
+      });
+    }
+
+    if (location.length < 2 || location.length > 120) {
+      return validationError(req, res, "location must be between 2 and 120 characters", {
+        locationLength: location.length,
       });
     }
 
@@ -43,6 +49,8 @@ router.get("/", async (req, res) => {
         : invalidProjectId
         ? "WATSONX_PROJECT_ID must be a UUID v4 from your watsonx project settings."
         : "Check WATSONX_API_KEY, WATSONX_PROJECT_ID, and WATSONX_BASE_URL in backend .env",
+      requestId: req.requestId,
+      timestamp: new Date().toISOString(),
     });
   }
 });

@@ -1,4 +1,5 @@
 import express from "express";
+import { validationError } from "../lib/http.js";
 import { calculateRisk } from "../lib/riskEngine.js";
 
 const router = express.Router();
@@ -7,9 +8,14 @@ router.get("/", (req, res) => {
 	const location = String(req.query.location || "").trim();
 
 	if (!location) {
-		return res.status(400).json({
-			error: "location is required",
+		return validationError(req, res, "location is required", {
 			example: "/risk?location=Delhi, DL",
+		});
+	}
+
+	if (location.length < 2 || location.length > 120) {
+		return validationError(req, res, "location must be between 2 and 120 characters", {
+			locationLength: location.length,
 		});
 	}
 

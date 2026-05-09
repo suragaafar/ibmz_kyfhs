@@ -2,6 +2,7 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import alertsRouter from "./routes/alerts.js";
+import { assignRequestId, logRequest } from "./lib/http.js";
 import reportRouter from "./routes/report.js";
 import riskRouter from "./routes/risk.js";
 import summaryRouter from "./routes/summary.js";
@@ -45,6 +46,8 @@ function validateWatsonEnv() {
 
 app.use(cors());
 app.use(express.json());
+app.use(assignRequestId);
+app.use(logRequest);
 
 app.get("/health", (_req, res) => {
 	res.json({ status: "ok", service: "aquaguard-backend" });
@@ -57,7 +60,12 @@ app.use("/summary", summaryRouter);
 app.use("/", overviewRouter);
 
 app.use((req, res) => {
-	res.status(404).json({ error: "Route not found", path: req.originalUrl });
+	res.status(404).json({
+		error: "Route not found",
+		path: req.originalUrl,
+		requestId: req.requestId,
+		timestamp: new Date().toISOString(),
+	});
 });
 
 validateWatsonEnv();

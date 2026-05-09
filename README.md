@@ -201,6 +201,46 @@ cd aquaguard/backend
 npm start
 ```
 
+---
+
+## API Contract (Person 2)
+
+Base URL (local): `http://localhost:4000`
+
+| Endpoint | Method | Required Input | Success Response (core fields) |
+|---|---|---|---|
+| `/health` | GET | None | `status`, `service` |
+| `/risk` | GET | `location` query param | `location`, `risk`, `confidence`, `riskScore`, `factors`, `alerts`, `reports`, `generatedAt` |
+| `/alerts` | GET | Optional `location` query param | `count`, `alerts[]` |
+| `/report` | POST | JSON body: `location`, `issueType`, `description` | `message`, `report` |
+| `/summary` | GET | `location` query param | `location`, `risk`, `confidence`, `summary`, `factors`, `generatedAt` |
+| `/statistics/overview` | GET | None | `totalCompanies`, `uniqueCountries` |
+| `/user/companies` | GET | Optional `limit` query param (`1..10000`) | `Company[]` |
+| `/countries` | GET | None | `Country[]` |
+
+### Validation Error Format
+
+Validation errors return HTTP 400 with this shape:
+
+```json
+{
+	"error": "validation message",
+	"details": {
+		"field": "context"
+	},
+	"requestId": "uuid",
+	"timestamp": "ISO-8601"
+}
+```
+
+### Example Requests
+
+```bash
+curl -sG "http://localhost:4000/risk" --data-urlencode "location=Mumbai, MH"
+curl -sG "http://localhost:4000/summary" --data-urlencode "location=Mumbai, MH"
+curl -s -X POST "http://localhost:4000/report" -H "Content-Type: application/json" -d '{"location":"Mumbai, MH","issueType":"cloudy water","description":"Water appears cloudy this morning."}'
+```
+
 ### Build
 
 ```bash
