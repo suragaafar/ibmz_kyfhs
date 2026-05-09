@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import ReportForm from '../components/ReportForm';
 import { reports as initialReports } from '../data/reports';
+import { useUserAuth } from '../context/UserAuthContext';
 
 export default function Report() {
+	const { user, isUserAuthenticated, addReport } = useUserAuth();
 	const [reports, setReports] = useState(initialReports);
 
 	function handleSubmit(report) {
+		const payload = {
+			id: Date.now(),
+			...report,
+			submittedBy: isUserAuthenticated ? user.displayName : 'You',
+			severity: 'medium',
+			points: 50,
+			submittedAt: new Date().toISOString()
+		};
+
 		setReports(function (current) {
-			return [
-				{
-					id: Date.now(),
-					...report,
-					submittedBy: 'You',
-					severity: 'medium'
-				},
-				...current
-			];
+			return [payload, ...current];
 		});
+
+		if (isUserAuthenticated) {
+			addReport(payload);
+		}
 	}
 
 	return (

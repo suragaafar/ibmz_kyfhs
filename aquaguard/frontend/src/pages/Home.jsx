@@ -1,6 +1,8 @@
 import React from 'react';
+import { useUserAuth } from '../context/UserAuthContext';
 
 export default function Home({ onNavigate }) {
+	const { isUserAuthenticated } = useUserAuth();
 	const highlights = [
 		{ label: 'Water status', value: 'Safe / Caution / Unsafe' },
 		{ label: 'Evidence', value: 'Alerts + reports + flood risk' },
@@ -28,7 +30,7 @@ export default function Home({ onNavigate }) {
 							>
 								View live dashboard
 							</button>
-							<button
+						<button
 								onClick={() => onNavigate('report')}
 								className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white transition hover:bg-white/10"
 							>
