@@ -1,6 +1,6 @@
 import React from 'react';
 
-const defaultUsers = [
+export const defaultUsers = [
 	{ id: 1, name: 'River Watcher', points: 1280, badge: 'Top reporter' },
 	{ id: 2, name: 'Blue Drop Team', points: 1160, badge: 'Leak finder' },
 	{ id: 3, name: 'CleanFlow Crew', points: 1035, badge: 'Water saver' },
@@ -21,7 +21,7 @@ export default function Leaderboard({ users = defaultUsers }) {
 				</div>
 			</div>
 
-			<div className="mt-5 space-y-3">
+			<div className="mt-5 max-h-[520px] space-y-3 overflow-y-auto pr-2">
 				{users.map(function (user, index) {
 					return (
 						<div key={user.id} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4">

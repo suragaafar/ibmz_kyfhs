@@ -3,12 +3,25 @@ import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import LeaderboardPage from './pages/LeaderboardPage';
+import Login from './pages/Login';
 import Overview from './pages/Overview';
+import Profile from './pages/Profile';
 import Report from './pages/Report';
-import { UserAuthProvider } from './context/UserAuthContext';
+import { UserAuthProvider, useUserAuth } from './context/UserAuthContext';
 
-export default function App() {
+function AppContent() {
 	const [activePage, setActivePage] = useState('home');
+	const { isUserAuthenticated } = useUserAuth();
+
+	function navigate(page) {
+		const protectedRoutes = ['report', 'leaderboard', 'profile'];
+		if (protectedRoutes.includes(page) && !isUserAuthenticated) {
+			setActivePage('login');
+			return;
+		}
+
+		setActivePage(page);
+	}
 
 	function renderPage() {
 		if (activePage === 'overview') {
@@ -20,14 +33,22 @@ export default function App() {
 		}
 
 		if (activePage === 'report') {
-			return <Report />;
+			return isUserAuthenticated ? <Report /> : <Login onNavigate={setActivePage} />;
 		}
 
 		if (activePage === 'leaderboard') {
-			return <LeaderboardPage />;
+			return isUserAuthenticated ? <LeaderboardPage /> : <Login onNavigate={setActivePage} />;
 		}
 
-		return <Home onNavigate={setActivePage} />;
+		if (activePage === 'profile') {
+			return isUserAuthenticated ? <Profile /> : <Login onNavigate={setActivePage} />;
+		}
+
+		if (activePage === 'login') {
+			return <Login onNavigate={setActivePage} />;
+		}
+
+		return <Home onNavigate={navigate} isUserAuthenticated={isUserAuthenticated} />;
 	}
 
 	return (

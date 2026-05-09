@@ -1,14 +1,22 @@
 import React from 'react';
+import { useUserAuth } from '../context/UserAuthContext';
 
-const items = [
+const publicItems = [
 	{ id: 'home', label: 'Home' },
 	{ id: 'overview', label: 'Overview' },
-	{ id: 'dashboard', label: 'Dashboard' },
+	{ id: 'dashboard', label: 'Dashboard' }
+];
+
+const privateItems = [
 	{ id: 'report', label: 'Report' },
-	{ id: 'leaderboard', label: 'Leaderboard' }
+	{ id: 'leaderboard', label: 'Leaderboard' },
+	{ id: 'profile', label: 'Profile' }
 ];
 
 export default function Navbar({ activePage, onNavigate }) {
+	const { isUserAuthenticated, user, signOut } = useUserAuth();
+	const items = isUserAuthenticated ? [...publicItems, ...privateItems] : publicItems;
+
 	return (
 		<header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
 			<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -39,25 +47,74 @@ export default function Navbar({ activePage, onNavigate }) {
 						);
 					})}
 				</nav>
+
+				<div className="hidden items-center gap-3 md:flex">
+					{isUserAuthenticated ? (
+						<>
+							<span className="text-sm text-slate-300">
+								Signed in as <span className="font-semibold text-white">{user?.displayName || user?.email || 'User'}</span>
+							</span>
+							<button
+								onClick={() => {
+								signOut();
+								onNavigate('home');
+							}}
+								className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+							>
+								Sign out
+							</button>
+						</>
+					) : (
+						<button
+							onClick={() => onNavigate('login')}
+							className="rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:scale-[1.01]"
+						>
+							Sign in
+						</button>
+					)}
+				</div>
 			</div>
 
 			<div className="border-t border-white/5 px-4 py-3 md:hidden">
-				<div className="flex flex-wrap gap-2">
-					{items.map(function (item) {
-						const isActive = activePage === item.id;
-						return (
+				<div className="flex flex-wrap items-center justify-between gap-2">
+					<div className="flex flex-wrap gap-2">
+						{items.map(function (item) {
+							const isActive = activePage === item.id;
+							return (
+								<button
+									key={item.id}
+									onClick={() => onNavigate(item.id)}
+									className={
+										'rounded-full px-3 py-1.5 text-xs font-semibold transition ' +
+										(isActive ? 'bg-cyan-400 text-slate-950' : 'bg-white/5 text-slate-300')
+									}
+								>
+									{item.label}
+								</button>
+							);
+						})}
+					</div>
+
+					<div>
+						{isUserAuthenticated ? (
 							<button
-								key={item.id}
-								onClick={() => onNavigate(item.id)}
-								className={
-									'rounded-full px-3 py-1.5 text-xs font-semibold transition ' +
-									(isActive ? 'bg-cyan-400 text-slate-950' : 'bg-white/5 text-slate-300')
-								}
+								onClick={() => {
+									signOut();
+									onNavigate('home');
+								}}
+								className="rounded-2xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/10"
 							>
-								{item.label}
+								Sign out
 							</button>
-						);
-					})}
+						) : (
+							<button
+								onClick={() => onNavigate('login')}
+								className="rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 px-3 py-1.5 text-xs font-semibold text-slate-950 transition hover:scale-[1.01]"
+							>
+								Sign in
+							</button>
+						)}
+					</div>
 				</div>
 			</div>
 		</header>
