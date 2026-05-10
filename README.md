@@ -1,12 +1,14 @@
 # AquaGuard
 
+See developer setup and runbook: [aquaguard/README.md](aquaguard/README.md)
+
 AquaGuard is an AI-powered Water Health Intelligence platform that helps communities detect possible water safety risks before they become public health crises.
 
 Today, water alerts, flood warnings, contamination risks, infrastructure issues, and community concerns are often scattered across multiple sources and difficult to understand quickly. AquaGuard combines all of that into one intelligent dashboard.
 
 The user enters a location, and the system provides:
 
-- Risk level (Safe / Caution / Unsafe)
+- Risk level (Low / Medium-Low / Medium / Medium-High / High)
 - Confidence score
 - AI-generated explanation
 - Contributing risk factors
@@ -46,7 +48,7 @@ Suppose:
 
 The platform combines this evidence and outputs:
 
-Risk Level: CAUTION  
+Risk Level: Medium  
 Confidence: 78%
 
 Then the AI explains why.
@@ -139,9 +141,11 @@ Example weights:
 
 Risk levels:
 
-- 0-30 = Safe
-- 31-65 = Caution
-- 66+ = Unsafe
+- 0-24 = Low
+- 25-39 = Medium-Low
+- 40-59 = Medium
+- 60-79 = Medium-High
+- 80-100 = High
 
 This logic lives inside the risk engine.
 

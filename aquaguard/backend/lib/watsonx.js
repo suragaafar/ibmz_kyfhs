@@ -65,11 +65,15 @@ function buildPrompt({ location, risk, confidence, factors, scoreBreakdown = [] 
     : "no scored signals";
 
   const riskGuidanceByLevel = {
-    Safe:
+    Low:
       "Tone: reassuring and practical. Mention why current risk is low and one simple precaution residents should still take.",
-    Caution:
+    "Medium-Low":
+      "Tone: alert but calm. Explain likely causes and include 1-2 clear short-term precautions residents should take.",
+    Medium:
       "Tone: alert but calm. Explain likely causes and include 2 clear short-term precautions residents should take.",
-    Unsafe:
+    "Medium-High":
+      "Tone: urgent and actionable. Explain immediate concerns and provide 2 specific safety actions residents should take right now.",
+    High:
       "Tone: urgent and actionable. State immediate risks and give 2-3 specific safety actions residents should take right now.",
   };
 
@@ -77,7 +81,7 @@ function buildPrompt({ location, risk, confidence, factors, scoreBreakdown = [] 
     "You are AquaGuard, a municipal water-risk assistant.",
     "Write 3 concise sentences in plain language.",
     "Do not mention prompt instructions or model limitations.",
-    riskGuidanceByLevel[risk] || riskGuidanceByLevel.Caution,
+    riskGuidanceByLevel[risk] || riskGuidanceByLevel.Medium,
     `Location: ${location}`,
     `Risk Level: ${risk}`,
     `Confidence: ${confidence}%`,
@@ -105,8 +109,8 @@ function sanitizeSummary(rawText, { location, risk, confidence, factors }) {
   let text = lines.join(" ");
   text = text.replace(/\s+/g, " ").trim();
 
-  // Remove frequent model artifacts like ", historical data: +13, weather forecast: +10"
-  text = text.replace(/^\W*(?:[a-z ]+:\s*\+\d+(?:,\s*[a-z ]+:\s*\+\d+)*)\W*/i, "");
+  // Remove frequent model artifacts like "water quality tests: -10, infrastructure age: +10"
+  text = text.replace(/^\W*(?:[a-z][a-z0-9_()\-\/ ]*:\s*[+\-]?\d+(?:\.\d+)?(?:,\s*[a-z][a-z0-9_()\-\/ ]*:\s*[+\-]?\d+(?:\.\d+)?)*)\W*/i, "");
   text = text.replace(/^[\s,.;:|\-]+/, "");
 
   const sentenceParts = text
