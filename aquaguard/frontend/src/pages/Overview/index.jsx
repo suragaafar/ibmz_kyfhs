@@ -12,18 +12,48 @@ const OVERVIEW_BACKEND_DISABLED = true;
 const countryNameDisplay = new Intl.DisplayNames(['en'], { type: 'region' });
 
 const knownContaminationLevels = {
+  // Low contamination (1-3)
   AQ: 1,
   AU: 2,
-  BR: 7,
   CA: 3,
-  CN: 9,
-  DE: 4,
-  FR: 6,
-  GB: 5,
-  IN: 8,
   JP: 3,
   NO: 2,
-  US: 2,
+  NZ: 2,
+  SE: 2,
+
+  // Medium-Low (4)
+  DE: 4,
+  ES: 4,
+  IT: 4,
+  US: 4,
+
+  // Medium (5)
+  GB: 5,
+  RU: 5,
+  SA: 5,
+  VN: 5,
+
+  // Medium-High (6)
+  BR: 6,
+  CN: 6,
+  FR: 6,
+  GH: 6,
+  MX: 6,
+  PH: 6,
+  TR: 6,
+  ZA: 6,
+
+  // High (7-10)
+  AO: 8,
+  BD: 7,
+  CD: 8,
+  EG: 7,
+  ID: 7,
+  IN: 8,
+  KE: 7,
+  NG: 8,
+  PK: 9,
+  TD: 9,
 };
 
 function getStableContaminationLevel(alpha2) {
@@ -103,7 +133,7 @@ const statCards = [
   {
     label: 'High risk countries',
     key: 'highRiskCount',
-    description: 'Countries with high contamination (6-10)',
+    description: 'Countries with medium-high or high contamination (6-10)',
     icon: '⚠️',
   },
   {
@@ -234,17 +264,19 @@ export default function OverviewPage() {
   function getFillColor(level) {
     if (level === 0) return 'rgba(203, 213, 225, 0.32)'; // No data
     if (level <= 3) return 'rgba(34, 197, 94, 0.6)'; // Low - Green
-    if (level <= 5) return 'rgba(251, 191, 36, 0.6)'; // Medium - Yellow
-    if (level <= 7) return 'rgba(245, 101, 101, 0.6)'; // High - Red
-    return 'rgba(239, 68, 68, 0.8)'; // Very High - Dark Red
+    if (level === 4) return 'rgba(163, 230, 53, 0.64)'; // Medium-Low - Yellow green
+    if (level === 5) return 'rgba(251, 191, 36, 0.66)'; // Medium - Yellow
+    if (level === 6) return 'rgba(251, 146, 60, 0.7)'; // Medium-High - Orange
+    return 'rgba(239, 68, 68, 0.78)'; // High - Red
   }
 
   function getContaminationLabel(level) {
     if (level === 0) return 'No Data';
     if (level <= 3) return 'Low';
-    if (level <= 5) return 'Medium';
-    if (level <= 7) return 'High';
-    return 'Very High';
+    if (level === 4) return 'Medium-Low';
+    if (level === 5) return 'Medium';
+    if (level === 6) return 'Medium-High';
+    return 'High';
   }
 
   function handleMouseMove(event) {
@@ -368,15 +400,19 @@ export default function OverviewPage() {
                 </div>
                 <div className={styles.legendRow}>
                   <span className={styles.legendSwatch} style={{ backgroundColor: getFillColor(4) }} />
-                  <span>Medium (4-5)</span>
+                  <span>Medium-Low (4)</span>
+                </div>
+                <div className={styles.legendRow}>
+                  <span className={styles.legendSwatch} style={{ backgroundColor: getFillColor(5) }} />
+                  <span>Medium (5)</span>
                 </div>
                 <div className={styles.legendRow}>
                   <span className={styles.legendSwatch} style={{ backgroundColor: getFillColor(6) }} />
-                  <span>High (6-7)</span>
+                  <span>Medium-High (6)</span>
                 </div>
                 <div className={styles.legendRow}>
-                  <span className={styles.legendSwatch} style={{ backgroundColor: getFillColor(8) }} />
-                  <span>Very High (8-10)</span>
+                  <span className={styles.legendSwatch} style={{ backgroundColor: getFillColor(7) }} />
+                  <span>High (7-10)</span>
                 </div>
               </div>
 
