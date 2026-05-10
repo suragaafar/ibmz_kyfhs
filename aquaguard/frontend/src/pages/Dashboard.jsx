@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import AlertFeed from '../components/AlertFeed';
 import AISummary from '../components/AISummary';
+import NewsPanel from '../components/NewsPanel';
 import RiskCard from '../components/RiskCard';
+import WeatherSnapshot from '../components/WeatherSnapshot';
 import { calculateWaterRisk, calculateCountryRisk, isCountryQuery } from '../utils/riskEngine';
 
 const KNOWN_LOCATIONS = [
@@ -173,7 +175,9 @@ export default function Dashboard() {
           }),
           activeAlerts: Array.isArray(riskPayload.alerts) ? riskPayload.alerts : [],
           matchingReports: Array.isArray(riskPayload.reports) ? riskPayload.reports : [],
-          explanation: summaryPayload?.summary || 'AI summary unavailable. Showing backend risk result.'
+          explanation: summaryPayload?.summary || 'AI summary unavailable. Showing backend risk result.',
+          weather: riskPayload.weather || null,
+          newsArticles: Array.isArray(riskPayload.newsArticles) ? riskPayload.newsArticles : []
         });
         setUsingFallback(false);
       } catch (error) {
@@ -181,7 +185,12 @@ export default function Dashboard() {
           return;
         }
 
-        setCityRisk(calculateWaterRisk(searchedLocation));
+        const fallback = calculateWaterRisk(searchedLocation);
+        setCityRisk({
+          ...fallback,
+          weather: null,
+          newsArticles: []
+        });
         setCityError('Live API unavailable. Showing local fallback data.');
         setUsingFallback(true);
       } finally {
@@ -240,6 +249,10 @@ export default function Dashboard() {
             </div>
           ) : null}
           <RiskCard risk={cityRisk} />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <WeatherSnapshot weather={cityRisk.weather} />
+            <NewsPanel articles={cityRisk.newsArticles} />
+          </div>
           <div className="grid gap-6 lg:grid-cols-2">
             <AlertFeed alerts={cityRisk.activeAlerts} />
             <AISummary summary={cityRisk.explanation} confidence={cityRisk.confidence} />

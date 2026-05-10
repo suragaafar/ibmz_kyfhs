@@ -7,7 +7,37 @@ function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
 
-function getRiskLevel(score) {
+/** Map common variants to one key so "Bangalore, IN" matches "Bengaluru, KA" in mock data. */
+const CANONICAL_CITY = {
+  bengaluru: "bangalore",
+  bangalore: "bangalore",
+  bombay: "mumbai",
+  mumbai: "mumbai",
+  "new delhi": "delhi",
+  delhi: "delhi",
+};
+
+function primaryCityPart(normalizedLocation) {
+  const segment = normalize(normalizedLocation).split(",")[0].trim();
+  return CANONICAL_CITY[segment] || segment;
+}
+
+/**
+ * True when mock row and user query refer to the same place (handles MH vs IN, Bangalore vs Bengaluru).
+ */
+export function locationMatchesQuery(storedLocation, queryLocation) {
+  const a = normalize(storedLocation);
+  const q = normalize(queryLocation);
+  if (!q) {
+    return false;
+  }
+  if (a.includes(q) || q.includes(a)) {
+    return true;
+  }
+  return primaryCityPart(a) === primaryCityPart(q);
+}
+
+export function getRiskLevel(score) {
   if (score <= 30) return "Safe";
   if (score <= 65) return "Caution";
   return "Unsafe";
@@ -86,11 +116,11 @@ export async function calculateRisk(location) {
   const target = normalize(location);
 
   const activeAlerts = alerts.filter((alert) => {
-    return alert.active && normalize(alert.location).includes(target);
+    return alert.active && locationMatchesQuery(alert.location, location);
   });
 
   const matchingReports = reports.filter((report) => {
-    return normalize(report.location).includes(target);
+    return locationMatchesQuery(report.location, location);
   });
 
   const uniqueAlertTypes = new Set(activeAlerts.map((item) => item.type));

@@ -7,7 +7,7 @@ export const ALERT_WEIGHTS = {
 export const alerts = [
   {
     id: 1,
-    location: "Mumbai, MH",
+    location: "Mumbai, IN",
     type: "flood_warning",
     title: "IMD heavy rainfall warning for Mumbai coastal belt",
     source: "India Meteorological Department",
@@ -17,7 +17,7 @@ export const alerts = [
   },
   {
     id: 2,
-    location: "Delhi, DL",
+    location: "Delhi, IN",
     type: "boil_water_advisory",
     title: "Precautionary boil-water advisory due to treatment disruption",
     source: "Delhi Jal Board",
@@ -27,7 +27,7 @@ export const alerts = [
   },
   {
     id: 3,
-    location: "Bengaluru, KA",
+    location: "Bangalore, IN",
     type: "sewage_overflow_risk",
     title: "Lake overflow linked sewage risk in Bellandur basin",
     source: "KSPCB",
@@ -90,7 +90,7 @@ export const alerts = [
 export const reports = [
   {
     id: 1,
-    location: "Mumbai, MH",
+    location: "Mumbai, IN",
     issueType: "brown water",
     description: "Brown water reported after overnight flooding.",
     submittedBy: "Kurla resident",
@@ -99,7 +99,7 @@ export const reports = [
   },
   {
     id: 2,
-    location: "Mumbai, MH",
+    location: "Mumbai, IN",
     issueType: "cloudy water",
     description: "Cloudy tap water with smell near Andheri.",
     submittedBy: "Andheri resident",
@@ -108,7 +108,7 @@ export const reports = [
   },
   {
     id: 3,
-    location: "Delhi, DL",
+    location: "Delhi, IN",
     issueType: "no water pressure",
     description: "Low pressure in multiple blocks.",
     submittedBy: "Rohini resident",

@@ -1,6 +1,6 @@
 import express from "express";
 import { logApiError, validationError } from "../lib/http.js";
-import { calculateRisk } from "../lib/riskEngine.js";
+import { assessLocationRisk } from "../lib/liveRiskAssessment.js";
 import { generateWatsonSummary } from "../lib/watsonx.js";
 
 const router = express.Router();
@@ -20,13 +20,13 @@ router.get("/", async (req, res) => {
       });
     }
 
-    const risk = await calculateRisk(location);
+    const risk = await assessLocationRisk(location);
     const summary = await generateWatsonSummary({
       location: risk.location,
       risk: risk.risk,
       confidence: risk.confidence,
       factors: risk.factors,
-      scoreBreakdown: risk.scoreBreakdown,
+      scoreBreakdown: risk.scoreBreakdown || [],
     });
 
     return res.json({
@@ -35,6 +35,8 @@ router.get("/", async (req, res) => {
       confidence: risk.confidence,
       summary,
       factors: risk.factors,
+      weather: risk.weather,
+      newsArticles: risk.newsArticles,
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
