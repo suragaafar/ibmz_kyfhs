@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
-import MarketingBanner from '../../shared/components/MarketingBanner';
 import { useUserAuth } from '../../context/UserAuthContext';
 import publicService from '../../services/PublicService/public.service';
 import { getIsoFromCompanyCountry, numericIsoToAlpha2, toAlpha2 } from '../../shared/utils/countryMapping';
@@ -425,11 +424,6 @@ export default function OverviewPage() {
             </div>
           </section>
 
-          {!isUserAuthenticated && (
-            <div className={styles.bannerWrap}>
-              <MarketingBanner />
-            </div>
-          )}
         </>
       )}
     </div>
