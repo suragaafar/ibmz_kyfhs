@@ -20,7 +20,7 @@ function computeInitialPoints(email) {
 
 export function UserAuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     try {
@@ -28,7 +28,10 @@ export function UserAuthProvider({ children }) {
       const storedCurrent = window.localStorage.getItem(STORAGE_KEY_CURRENT_USER);
 
       if (storedUsers) {
-        setUsers(JSON.parse(storedUsers));
+        const parsed = JSON.parse(storedUsers);
+        if (Array.isArray(parsed)) {
+          setUsers(parsed);
+        }
       }
       if (storedCurrent) {
         setUser(JSON.parse(storedCurrent));
@@ -64,7 +67,7 @@ export function UserAuthProvider({ children }) {
       return { success: false, message: 'Please enter both email and password.' };
     }
 
-    const existing = users[normalized];
+    const existing = users.find(u => normalizeEmail(u.email) === normalized);
     if (!existing) {
       return { success: false, message: 'No account found. Please sign up first.' };
     }
@@ -94,7 +97,7 @@ export function UserAuthProvider({ children }) {
       return { success: false, message: 'Password must be at least 6 characters.' };
     }
 
-    if (users[normalized]) {
+    if (users.some(u => normalizeEmail(u.email) === normalized)) {
       return { success: false, message: 'An account already exists with that email. Please log in.' };
     }
 
@@ -107,10 +110,7 @@ export function UserAuthProvider({ children }) {
       reports: []
     };
 
-    setUsers((current) => ({
-      ...current,
-      [normalized]: profile
-    }));
+    setUsers((current) => [...current, profile]);
 
     setUser({
       email: profile.email,
@@ -140,22 +140,16 @@ export function UserAuthProvider({ children }) {
       points: pointsDelta,
     };
 
-    setUsers((current) => {
-      const existing = current[normalized] || {
-        email: normalized,
-        displayName: user.displayName,
-        points: user.points,
-        createdAt: user.createdAt,
-        password: '',
-        reports: []
-      };
-      const updated = {
-        ...existing,
-        reports: [submittedReport, ...(existing.reports || [])],
-        points: existing.points + pointsDelta
-      };
-      return { ...current, [normalized]: updated };
-    });
+    setUsers((current) => current.map(u => {
+      if (normalizeEmail(u.email) === normalized) {
+        return {
+          ...u,
+          reports: [submittedReport, ...(u.reports || [])],
+          points: u.points + pointsDelta
+        };
+      }
+      return u;
+    }));
 
     setUser((current) => ({
       ...current,
