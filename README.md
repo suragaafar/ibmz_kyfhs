@@ -48,12 +48,12 @@ contamination risk due to nearby flooding, shared sewage
 infrastructure, and multiple community reports."
 ```
 
-### Architecture (RAG Pipeline)
+### Processing Pipeline
 
 ```
 User Input (Location)
          ↓
-   Backend Aggregates:
+   Backend Aggregates Data:
    • Water advisories
    • Weather/flood alerts
    • News articles
