@@ -53,12 +53,12 @@ function AppContent() {
 
 	return (
 		<div className="min-h-screen text-slate-100">
-			<Navbar activePage={activePage} onNavigate={navigate} />
+			<Navbar activePage={activePage} onNavigate={setActivePage} />
 			<main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
 				{renderPage()}
 			</main>
 			<footer className="mx-auto max-w-7xl px-4 pb-8 text-xs text-slate-500 sm:px-6 lg:px-8">
-				AquaGuard AI is a mock hackathon prototype with no real data connections yet.
+				AquaGuard AI uses live weather, advisories, and community signals with transparent sources.
 			</footer>
 		</div>
 	);

@@ -6,7 +6,7 @@ export default function Home({ onNavigate }) {
 	const highlights = [
 		{ label: 'Water status', value: 'Safe / Caution / Unsafe' },
 		{ label: 'Evidence', value: 'Alerts + reports + flood risk' },
-		{ label: 'Speed', value: 'Instant mock scoring' }
+		{ label: 'Speed', value: 'Real-time signal scoring' }
 	];
 
 	return (
@@ -15,13 +15,13 @@ export default function Home({ onNavigate }) {
 				<div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
 					<div>
 						<div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">
-							Hackathon prototype
+							Live data platform
 						</div>
 						<h1 className="mt-5 max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
 							AI-powered water health intelligence for safer communities.
 						</h1>
 						<p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
-							AquaGuard AI blends mock municipal alerts, flood warnings, and community reports into a simple water status with an explanation teams can understand at a glance.
+							AquaGuard AI combines live weather alerts, official advisories, flood risk, and community reports into a clear water status with source-backed explanation.
 						</p>
 						<div className="mt-8 flex flex-col gap-3 sm:flex-row">
 							<button
@@ -60,7 +60,7 @@ export default function Home({ onNavigate }) {
 					},
 					{
 						title: 'Transparent logic',
-						text: 'Weighted mock scoring shows why a location is flagged.'
+						text: 'Transparent scoring shows why a location is flagged.'
 					},
 					{
 						title: 'Community driven',

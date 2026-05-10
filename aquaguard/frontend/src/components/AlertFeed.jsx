@@ -6,7 +6,7 @@ export default function AlertFeed({ alerts }) {
 			<div className="flex items-center justify-between gap-4">
 				<div>
 					<h3 className="text-lg font-semibold text-white">Alert feed</h3>
-					<p className="text-sm text-slate-400">Mock official alerts and warning signals.</p>
+					<p className="text-sm text-slate-400">Live official alerts and warning signals.</p>
 				</div>
 				<div className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
 					{alerts.length} active
@@ -20,7 +20,7 @@ export default function AlertFeed({ alerts }) {
 							<div className="flex items-start justify-between gap-4">
 								<div>
 									<div className="text-sm font-semibold text-white">{alert.title}</div>
-									<div className="mt-1 text-sm text-slate-400">{alert.source} · {alert.location}</div>
+									<div className="mt-1 text-sm text-slate-400">{alert.source} · {alert.location}{alert.sourceUrl ? (<> · <a href={alert.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-300 underline">Verify</a></>) : null}</div>
 								</div>
 								<span className="rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-950 bg-gradient-to-r from-cyan-300 to-teal-300">
 									{alert.type.replace(/_/g, ' ')}
