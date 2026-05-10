@@ -77,7 +77,7 @@ export default function Login({ onNavigate }) {
           </button>
         </div>
         <h1 className="text-3xl font-bold text-white sm:text-4xl">
-          {isRegistering ? 'Create your AquaGuard account' : 'Sign in to AquaGuard AI'}
+          {isRegistering ? 'Create your AquaGuard account' : 'Sign in to AquaGuard'}
         </h1>
         <p className="text-sm leading-6 text-slate-300">
           {isRegistering

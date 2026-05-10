@@ -2,7 +2,7 @@
 
 AquaGuard is an AI-powered Water Health Intelligence platform that helps communities detect possible water safety risks before they become public health crises.
 
-Today, water alerts, flood warnings, contamination risks, infrastructure issues, and community concerns are often scattered across multiple sources and difficult to understand quickly. AquaGuard AI combines all of that into one intelligent dashboard.
+Today, water alerts, flood warnings, contamination risks, infrastructure issues, and community concerns are often scattered across multiple sources and difficult to understand quickly. AquaGuard combines all of that into one intelligent dashboard.
 
 The user enters a location, and the system provides:
 

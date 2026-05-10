@@ -58,7 +58,7 @@ function AppContent() {
 				{renderPage()}
 			</main>
 			<footer className="mx-auto max-w-7xl px-4 pb-8 text-xs text-slate-500 sm:px-6 lg:px-8">
-				AquaGuard AI uses live weather, advisories, and community signals with transparent sources.
+				AquaGuard uses live weather, advisories, and community signals with transparent sources.
 			</footer>
 		</div>
 	);

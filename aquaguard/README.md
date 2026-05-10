@@ -1,4 +1,4 @@
-# AquaGuard AI
+# AquaGuard
 
 ## Run locally
 

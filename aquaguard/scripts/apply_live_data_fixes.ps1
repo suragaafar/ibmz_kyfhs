@@ -15,7 +15,7 @@ function Replace-InFile {
 
 # App footer
 $appPath = 'c:\Users\user\Downloads\VS\IBMZ_KYFHS\aquaguard\frontend\src\App.jsx'
-Replace-InFile -Path $appPath -Old 'AquaGuard AI is a mock hackathon prototype with no real data connections yet.' -New 'AquaGuard AI uses live weather, advisories, and community signals with transparent sources.'
+Replace-InFile -Path $appPath -Old 'AquaGuard is a mock hackathon prototype with no real data connections yet.' -New 'AquaGuard uses live weather, advisories, and community signals with transparent sources.'
 
 # AI Summary subtitle
 $aiSummaryPath = 'c:\Users\user\Downloads\VS\IBMZ_KYFHS\aquaguard\frontend\src\components\AISummary.jsx'
@@ -25,7 +25,7 @@ Replace-InFile -Path $aiSummaryPath -Old 'Mocked for the hackathon prototype.' -
 $homePath = 'c:\Users\user\Downloads\VS\IBMZ_KYFHS\aquaguard\frontend\src\pages\Home.jsx'
 Replace-InFile -Path $homePath -Old 'Hackathon prototype' -New 'Live data platform'
 Replace-InFile -Path $homePath -Old 'Instant mock scoring' -New 'Real-time signal scoring'
-Replace-InFile -Path $homePath -Old 'AquaGuard AI blends mock municipal alerts, flood warnings, and community reports into a simple water status with an explanation teams can understand at a glance.' -New 'AquaGuard AI combines live weather alerts, official advisories, flood risk, and community reports into a clear water status with source-backed explanation.'
+Replace-InFile -Path $homePath -Old 'AquaGuard blends mock municipal alerts, flood warnings, and community reports into a simple water status with an explanation teams can understand at a glance.' -New 'AquaGuard combines live weather alerts, official advisories, flood risk, and community reports into a clear water status with source-backed explanation.'
 Replace-InFile -Path $homePath -Old 'Weighted mock scoring shows why a location is flagged.' -New 'Transparent scoring shows why a location is flagged.'
 
 # Neutralize hardcoded advisory seed data

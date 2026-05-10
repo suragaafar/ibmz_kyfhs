@@ -25,7 +25,7 @@ export default function Navbar({ activePage, onNavigate }) {
 						<span className="text-lg font-bold">A</span>
 					</div>
 					<div>
-						<div className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200/80">AquaGuard AI</div>
+						<div className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200/80">AquaGuard</div>
 						<div className="text-xs text-slate-400">Water health intelligence</div>
 					</div>
 				</button>

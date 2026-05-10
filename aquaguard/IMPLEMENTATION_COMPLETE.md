@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AquaGuard AI water safety platform has been fully implemented with a **complete backend data layer** replacing all mock frontend data. The system now has:
+The AquaGuard water safety platform has been fully implemented with a **complete backend data layer** replacing all mock frontend data. The system now has:
 
 - ✅ Real weather data (Open-Meteo API)
 - ✅ Real weather alerts (Open-Meteo Alerts API)

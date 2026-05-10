@@ -58,7 +58,7 @@ function buildPrompt({ location, risk, confidence, factors, scoreBreakdown = [] 
   };
 
   return [
-    "You are AquaGuard AI, a municipal water-risk assistant.",
+    "You are AquaGuard, a municipal water-risk assistant.",
     "Write 3 concise sentences in plain language.",
     "Do not mention prompt instructions or model limitations.",
     riskGuidanceByLevel[risk] || riskGuidanceByLevel.Caution,
