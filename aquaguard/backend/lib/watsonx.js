@@ -70,6 +70,40 @@ function buildPrompt({ location, risk, confidence, factors, scoreBreakdown = [] 
   ].join("\n");
 }
 
+function sanitizeSummary(rawText, { location, risk, confidence, factors }) {
+  const fallback = `AquaGuard marks ${location} as ${risk} (${confidence}% confidence) based on ${factors.join(", ") || "available evidence"}.`;
+  if (!rawText) {
+    return fallback;
+  }
+
+  const lines = String(rawText)
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => {
+      return !/^(tone:|location:|risk level:|confidence:|key factors:|score breakdown:)/i.test(line);
+    });
+
+  let text = lines.join(" ");
+  text = text.replace(/\s+/g, " ").trim();
+
+  // Remove frequent model artifacts like ", historical data: +13, weather forecast: +10"
+  text = text.replace(/^\W*(?:[a-z ]+:\s*\+\d+(?:,\s*[a-z ]+:\s*\+\d+)*)\W*/i, "");
+  text = text.replace(/^[\s,.;:|\-]+/, "");
+
+  const sentenceParts = text
+    .split(/(?<=[.!?])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  const capped = sentenceParts.slice(0, 3).join(" ").trim();
+  if (capped.length < 35) {
+    return fallback;
+  }
+  return capped;
+}
+
 async function generateWithModel({ token, endpoint, projectId, prompt, modelId }) {
   const payload = {
     model_id: modelId,
@@ -110,7 +144,7 @@ async function generateWithModel({ token, endpoint, projectId, prompt, modelId }
   }
 
   const responseJson = await response.json();
-  return responseJson?.results?.[0]?.generated_text?.trim() || "No summary generated.";
+  return responseJson?.results?.[0]?.generated_text?.trim() || "";
 }
 
 export async function generateWatsonSummary({ location, risk, confidence, factors, scoreBreakdown = [] }) {
@@ -137,7 +171,8 @@ export async function generateWatsonSummary({ location, risk, confidence, factor
   let lastError;
   for (const candidate of candidateModels) {
     try {
-      return await generateWithModel({ token, endpoint, projectId, prompt, modelId: candidate });
+      const raw = await generateWithModel({ token, endpoint, projectId, prompt, modelId: candidate });
+      return sanitizeSummary(raw, { location, risk, confidence, factors });
     } catch (error) {
       const message = String(error?.message || "");
       const canTryNext = message.includes("model_not_supported") || message.includes("Model '");
