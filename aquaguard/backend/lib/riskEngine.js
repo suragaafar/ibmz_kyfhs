@@ -1,13 +1,42 @@
 import { ALERT_WEIGHTS, alerts, reports } from "../data/mockStore.js";
 import { getFloodSignal } from "../services/floodService.js";
 import { getGovernmentAdvisorySignal } from "../services/govAdvisoriesService.js";
-import { getWeatherSignal } from "../services/weatherService.js";
 
 function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
 
-function getRiskLevel(score) {
+/** Map common variants to one key so "Bangalore, IN" matches "Bengaluru, KA" in mock data. */
+const CANONICAL_CITY = {
+  bengaluru: "bangalore",
+  bangalore: "bangalore",
+  bombay: "mumbai",
+  mumbai: "mumbai",
+  "new delhi": "delhi",
+  delhi: "delhi",
+};
+
+function primaryCityPart(normalizedLocation) {
+  const segment = normalize(normalizedLocation).split(",")[0].trim();
+  return CANONICAL_CITY[segment] || segment;
+}
+
+/**
+ * True when mock row and user query refer to the same place (handles MH vs IN, Bangalore vs Bengaluru).
+ */
+export function locationMatchesQuery(storedLocation, queryLocation) {
+  const a = normalize(storedLocation);
+  const q = normalize(queryLocation);
+  if (!q) {
+    return false;
+  }
+  if (a.includes(q) || q.includes(a)) {
+    return true;
+  }
+  return primaryCityPart(a) === primaryCityPart(q);
+}
+
+export function getRiskLevel(score) {
   if (score <= 30) return "Safe";
   if (score <= 65) return "Caution";
   return "Unsafe";
@@ -70,8 +99,8 @@ function getExternalEndpointSignal(location, envKey) {
 }
 
 async function getExternalSignals(location) {
-  const [weather, govAdvisory, flood, imdSignal, municipalSignal, floodGisSignal] = await Promise.all([
-    getWeatherSignal(location).catch(() => null),
+  // Weather is fetched and scored in liveRiskAssessment.js (Open-Meteo + UI payload), not here, to avoid double counting.
+  const [govAdvisory, flood, imdSignal, municipalSignal, floodGisSignal] = await Promise.all([
     getGovernmentAdvisorySignal(location).catch(() => null),
     getFloodSignal(location).catch(() => null),
     getExternalEndpointSignal(location, "IMD_RAINFALL_API_URL"),
@@ -79,18 +108,18 @@ async function getExternalSignals(location) {
     getExternalEndpointSignal(location, "FLOOD_GIS_API_URL"),
   ]);
 
-  return [weather, govAdvisory, flood, imdSignal, municipalSignal, floodGisSignal].filter(Boolean);
+  return [govAdvisory, flood, imdSignal, municipalSignal, floodGisSignal].filter(Boolean);
 }
 
 export async function calculateRisk(location) {
   const target = normalize(location);
 
   const activeAlerts = alerts.filter((alert) => {
-    return alert.active && normalize(alert.location).includes(target);
+    return alert.active && locationMatchesQuery(alert.location, location);
   });
 
   const matchingReports = reports.filter((report) => {
-    return normalize(report.location).includes(target);
+    return locationMatchesQuery(report.location, location);
   });
 
   const uniqueAlertTypes = new Set(activeAlerts.map((item) => item.type));

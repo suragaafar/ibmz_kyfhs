@@ -30,7 +30,9 @@ export default function ReportForm({ onSubmit }) {
 			<div className="flex items-start justify-between gap-4">
 				<div>
 					<h3 className="text-lg font-semibold text-white">Report water issue</h3>
-					<p className="text-sm text-slate-400">Submit a quick community signal. No login required.</p>
+					<p className="text-sm text-slate-400">
+						Submit a quick community signal. Sign in to earn leaderboard points (+50 per accepted report).
+					</p>
 				</div>
 				<div className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
 					Community report

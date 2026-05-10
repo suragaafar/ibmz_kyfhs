@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const UserAuthContext = createContext({ isUserAuthenticated: false });
 const STORAGE_KEY_USERS = 'aquaguard-auth-users';
@@ -123,17 +123,21 @@ export function UserAuthProvider({ children }) {
     return { success: true };
   }
 
-  function addReport(report) {
+  const addReport = useCallback(function addReport(report) {
     if (!user?.email) {
       return { success: false, message: 'Must be signed in to save this report.' };
     }
 
     const normalized = normalizeEmail(user.email);
+    const award = Number(report?.pointsAwarded ?? report?.points ?? 50);
+    const pointsDelta = Number.isFinite(award) && award > 0 ? award : 50;
+
     const submittedReport = {
-      id: Date.now(),
       ...report,
+      id: report.id != null ? report.id : Date.now(),
       submittedBy: user.displayName,
-      submittedAt: report.submittedAt || new Date().toISOString()
+      submittedAt: report.submittedAt || new Date().toISOString(),
+      points: pointsDelta,
     };
 
     setUsers((current) => {
@@ -148,19 +152,19 @@ export function UserAuthProvider({ children }) {
       const updated = {
         ...existing,
         reports: [submittedReport, ...(existing.reports || [])],
-        points: existing.points + 50
+        points: existing.points + pointsDelta
       };
       return { ...current, [normalized]: updated };
     });
 
     setUser((current) => ({
       ...current,
-      points: (current?.points || 0) + 50,
+      points: (current?.points || 0) + pointsDelta,
       reports: [submittedReport, ...(current?.reports || [])]
     }));
 
     return { success: true, report: submittedReport };
-  }
+  }, [user]);
 
   function signOut() {
     setUser(null);
@@ -168,7 +172,7 @@ export function UserAuthProvider({ children }) {
 
   const value = useMemo(
     () => ({ isUserAuthenticated: Boolean(user), user, signIn, signUp, signOut, addReport }),
-    [user]
+    [user, addReport]
   );
 
   return <UserAuthContext.Provider value={value}>{children}</UserAuthContext.Provider>;

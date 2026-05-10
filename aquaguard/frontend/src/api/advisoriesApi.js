@@ -1,6 +1,6 @@
 import { ADVISORY_SIGNAL } from '../routes/routeConstants/apiRoutes';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 export async function getAdvisorySignal(location) {
   try {

@@ -1,11 +1,10 @@
 import express from "express";
-import { validationError } from "../lib/http.js";
-import { calculateRisk } from "../lib/riskEngine.js";
+import { logApiError, validationError } from "../lib/http.js";
+import { assessLocationRisk } from "../lib/liveRiskAssessment.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
-	try {
+router.get("/", async function (req, res) {
 	const location = String(req.query.location || "").trim();
 
 	if (!location) {
@@ -20,10 +19,17 @@ router.get("/", async (req, res, next) => {
 		});
 	}
 
-	const result = await calculateRisk(location);
-	return res.json(result);
+	try {
+		const result = await assessLocationRisk(location);
+		return res.json(result);
 	} catch (error) {
-		return next(error);
+		logApiError(req, "risk_assessment_failed", error);
+		return res.status(500).json({
+			error: "Failed to assess risk",
+			message: String(error?.message || "Unexpected error"),
+			requestId: req.requestId,
+			timestamp: new Date().toISOString(),
+		});
 	}
 });
 

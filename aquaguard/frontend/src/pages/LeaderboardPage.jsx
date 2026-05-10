@@ -5,7 +5,15 @@ import { useUserAuth } from '../context/UserAuthContext';
 export default function LeaderboardPage() {
 	const { isUserAuthenticated, user } = useUserAuth();
 	const leaderboardUsers = isUserAuthenticated
-		? [...defaultUsers, { id: 'you', name: `${user.displayName} (You)`, points: user.points, badge: 'Your score' }]
+		? [
+				...defaultUsers,
+				{
+					id: 'you',
+					name: `${user?.displayName || user?.email || 'You'} (You)`,
+					points: user?.points ?? 0,
+					badge: 'Your score',
+				},
+			]
 		: defaultUsers;
 
 	const sortedUsers = leaderboardUsers.sort((a, b) => b.points - a.points);

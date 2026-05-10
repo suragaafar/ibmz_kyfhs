@@ -3,7 +3,7 @@ import { useUserAuth } from '../context/UserAuthContext';
 
 const publicItems = [
 	{ id: 'home', label: 'Home' },
-	{ id: 'overview', label: 'Overview' },
+	{ id: 'overview', label: 'Leadership' },
 	{ id: 'dashboard', label: 'Dashboard' }
 ];
 

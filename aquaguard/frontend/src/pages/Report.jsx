@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ReportForm from '../components/ReportForm';
 import { getReports, createReport } from '../api/reportsApi';
 import { searchWaterNews } from '../api/newsApi';
+import { useUserAuth } from '../context/UserAuthContext';
 
 export default function Report() {
+	const { isUserAuthenticated, addReport } = useUserAuth();
 	const [reports, setReports] = useState([]);
 	const [newsArticles, setNewsArticles] = useState([]);
 	const [selectedLocation, setSelectedLocation] = useState('Windsor, ON');
@@ -39,6 +41,18 @@ export default function Report() {
 			});
 
 			setSelectedLocation(report.location);
+
+			if (isUserAuthenticated) {
+				addReport({
+					id: newReport.id,
+					location: newReport.location,
+					issueType: newReport.issueType,
+					description: newReport.description,
+					severity: newReport.severity || 'medium',
+					submittedAt: newReport.submittedAt || report.submittedAt,
+					points: 50,
+				});
+			}
 		}
 	}
 
