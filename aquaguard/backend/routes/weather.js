@@ -13,8 +13,12 @@ router.get('/signal', async function (req, res, next) {
 
     const signal = await getWeatherSignal(location);
 
-    if (!signal) {
-      return res.status(404).json({ message: 'No weather coordinates available for this location' });
+    if (!signal?.available) {
+      return res.status(404).json({
+        message: signal?.message || 'No weather coordinates available for this location',
+        available: false,
+        location: String(location).trim(),
+      });
     }
 
     return res.json(signal);
