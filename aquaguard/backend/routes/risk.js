@@ -4,7 +4,8 @@ import { calculateRisk } from "../lib/riskEngine.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res, next) => {
+	try {
 	const location = String(req.query.location || "").trim();
 
 	if (!location) {
@@ -19,8 +20,11 @@ router.get("/", (req, res) => {
 		});
 	}
 
-	const result = calculateRisk(location);
+	const result = await calculateRisk(location);
 	return res.json(result);
+	} catch (error) {
+		return next(error);
+	}
 });
 
 export default router;

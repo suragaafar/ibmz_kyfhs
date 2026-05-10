@@ -20,12 +20,13 @@ router.get("/", async (req, res) => {
       });
     }
 
-    const risk = calculateRisk(location);
+    const risk = await calculateRisk(location);
     const summary = await generateWatsonSummary({
       location: risk.location,
       risk: risk.risk,
       confidence: risk.confidence,
       factors: risk.factors,
+      scoreBreakdown: risk.scoreBreakdown,
     });
 
     return res.json({

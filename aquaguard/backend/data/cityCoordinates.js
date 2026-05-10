@@ -88,5 +88,23 @@ export const cityCoordinates = {
     longitude: 77.5946,
     country: 'India',
     province: 'Karnataka'
+  },
+  'Chennai, TN': {
+    latitude: 13.0827,
+    longitude: 80.2707,
+    country: 'India',
+    province: 'Tamil Nadu'
+  },
+  'Hyderabad, TS': {
+    latitude: 17.385,
+    longitude: 78.4867,
+    country: 'India',
+    province: 'Telangana'
+  },
+  'Pune, MH': {
+    latitude: 18.5204,
+    longitude: 73.8567,
+    country: 'India',
+    province: 'Maharashtra'
   }
 };
