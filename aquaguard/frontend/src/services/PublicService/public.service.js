@@ -1,3 +1,4 @@
+import { COUNTRIES, STATISTICS_OVERVIEW, USER_COMPANIES } from '../../routes/routeConstants/apiRoutes.js';
 import { getIsoFromCompanyCountry, toAlpha2 } from '../../shared/utils/countryMapping.js';
 
 const companies = [
@@ -26,28 +27,52 @@ function delay(value) {
   return new Promise((resolve) => setTimeout(() => resolve(value), 300));
 }
 
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+
+async function requestJson(path) {
+  const response = await fetch(apiBase + path);
+  if (!response.ok) {
+    throw new Error('Request failed: ' + response.status + ' ' + path);
+  }
+
+  return response.json();
+}
+
 export default {
   async getOverviewStats() {
-    const countriesSeen = new Set();
-    for (const company of companies) {
-      const rawIso = getIsoFromCompanyCountry(company.country);
-      const alpha2 = toAlpha2(rawIso);
-      if (alpha2) {
-        countriesSeen.add(alpha2);
+    try {
+      return await requestJson(STATISTICS_OVERVIEW);
+    } catch (_error) {
+      const countriesSeen = new Set();
+      for (const company of companies) {
+        const rawIso = getIsoFromCompanyCountry(company.country);
+        const alpha2 = toAlpha2(rawIso);
+        if (alpha2) {
+          countriesSeen.add(alpha2);
+        }
       }
-    }
 
-    return delay({
-      totalCompanies: companies.length,
-      uniqueCountries: countriesSeen.size,
-    });
+      return delay({
+        totalCompanies: companies.length,
+        uniqueCountries: countriesSeen.size,
+      });
+    }
   },
 
-  async getCompanies() {
-    return delay(companies);
+  async getCompanies(options = {}) {
+    const limit = options?.limit ? '?limit=' + encodeURIComponent(String(options.limit)) : '';
+    try {
+      return await requestJson(USER_COMPANIES + limit);
+    } catch (_error) {
+      return delay(companies);
+    }
   },
 
   async getCountries() {
-    return delay(countries);
+    try {
+      return await requestJson(COUNTRIES);
+    } catch (_error) {
+      return delay(countries);
+    }
   },
 };

@@ -152,33 +152,164 @@ This logic lives inside the risk engine.
 ### Prerequisites
 
 - Node.js 18+
-- API key for AI provider used in current implementation
+- IBM watsonx.ai credentials (for live summary generation)
 
 ### Installation
 
 ```bash
 git clone <repo-url>
 cd IBMZ_KYFHS
+```
+
+### Install dependencies
+
+```bash
+cd aquaguard/frontend
+npm install
+
+cd ../backend
 npm install
 ```
 
-### Configuration
+### Configure backend environment
 
 ```bash
+cd aquaguard/backend
 cp .env.example .env
-# Add VITE_GEMINI_API_KEY and API endpoint settings as needed
 ```
 
-### Run
+Edit `.env` and set:
+
+- `WATSONX_API_KEY`
+- `WATSONX_PROJECT_ID`
+- `WATSONX_BASE_URL` (for example `https://us-south.ml.cloud.ibm.com`)
+- `WATSONX_MODEL_ID` (optional)
+- `WATSONX_TIMEOUT_MS` (optional, default `10000`)
+- `API_SHARED_TOKEN` (optional; if set, POST `/report` requires header `x-api-token`)
+
+### Run frontend
 
 ```bash
+cd aquaguard/frontend
+cp .env.example .env
 npm run dev
 ```
 
 Open http://localhost:5173
 
+`VITE_API_BASE_URL` defaults to `http://localhost:4000`.
+
+### Run backend (when available)
+
+```bash
+cd aquaguard/backend
+npm start
+```
+
+### Smoke test backend
+
+```bash
+cd aquaguard/backend
+npm run smoke
+```
+
+### Contract validation test
+
+```bash
+cd aquaguard/backend
+npm run test:contract
+```
+
+---
+
+## API Contract (Person 2)
+
+Base URL (local): `http://localhost:4000`
+
+| Endpoint | Method | Required Input | Success Response (core fields) |
+|---|---|---|---|
+| `/health` | GET | None | `status`, `service` |
+| `/risk` | GET | `location` query param | `location`, `risk`, `confidence`, `riskScore`, `factors`, `alerts`, `reports`, `generatedAt` |
+| `/alerts` | GET | Optional `location` query param | `count`, `alerts[]` |
+| `/report` | POST | JSON body: `location`, `issueType`, `description` | `message`, `report` |
+| `/summary` | GET | `location` query param | `location`, `risk`, `confidence`, `summary`, `factors`, `generatedAt` |
+| `/statistics/overview` | GET | None | `totalCompanies`, `uniqueCountries` |
+| `/user/companies` | GET | Optional `limit` query param (`1..10000`) | `Company[]` |
+| `/countries` | GET | None | `Country[]` |
+
+### Validation Error Format
+
+Validation errors return HTTP 400 with this shape:
+
+```json
+{
+	"error": "validation message",
+	"details": {
+		"field": "context"
+	},
+	"requestId": "uuid",
+	"timestamp": "ISO-8601"
+}
+```
+
+### Runtime Protections
+
+- Rate limits:
+	- `/summary`: 25 requests per minute per IP
+	- `/report`: 15 requests per minute per IP
+- Optional auth guard:
+	- If `API_SHARED_TOKEN` is set, `POST /report` requires header `x-api-token`.
+
+### Example Requests
+
+```bash
+curl -sG "http://localhost:4000/risk" --data-urlencode "location=Mumbai, MH"
+curl -sG "http://localhost:4000/summary" --data-urlencode "location=Mumbai, MH"
+curl -s -X POST "http://localhost:4000/report" -H "Content-Type: application/json" -d '{"location":"Mumbai, MH","issueType":"cloudy water","description":"Water appears cloudy this morning."}'
+```
+
+### Example Success Responses
+
+`GET /health`
+
+```json
+{
+	"status": "ok",
+	"service": "aquaguard-backend"
+}
+```
+
+`GET /risk?location=Mumbai,%20MH`
+
+```json
+{
+	"location": "Mumbai, MH",
+	"risk": "Safe",
+	"confidence": 71,
+	"riskScore": 30,
+	"factors": ["flood warning", "multiple community reports"],
+	"alerts": [],
+	"reports": [],
+	"generatedAt": "2026-05-09T23:40:00.000Z"
+}
+```
+
+`GET /summary?location=Mumbai,%20MH`
+
+```json
+{
+	"location": "Mumbai, MH",
+	"risk": "Safe",
+	"confidence": 71,
+	"summary": "AquaGuard marks Mumbai, MH as Safe...",
+	"factors": ["flood warning", "multiple community reports"],
+	"generatedAt": "2026-05-09T23:40:00.000Z"
+}
+```
+
 ### Build
 
 ```bash
+cd aquaguard/frontend
 npm run build
 ```

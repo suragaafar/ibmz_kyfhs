@@ -41,6 +41,7 @@ export default function OverviewPage() {
   const { isUserAuthenticated } = useUserAuth();
   const [stats, setStats] = useState(null);
   const [countriesFromApi, setCountriesFromApi] = useState([]);
+  const [backendStatus, setBackendStatus] = useState('unknown');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tooltipContent, setTooltipContent] = useState(null);
@@ -57,6 +58,14 @@ export default function OverviewPage() {
     const fetchOverview = async () => {
       setLoading(true);
       setError(null);
+
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+      try {
+        const healthResponse = await fetch(apiBase + '/health');
+        setBackendStatus(healthResponse.ok ? 'live' : 'fallback');
+      } catch (_healthError) {
+        setBackendStatus('fallback');
+      }
 
       try {
         const [companiesPayload, overviewStatsRaw, countriesListRaw] = await Promise.all([
@@ -144,7 +153,9 @@ export default function OverviewPage() {
           <h1 className={styles.title}>Index Overview</h1>
           <p className={styles.subtitle}>A read-mostly dashboard for catalog coverage and geography.</p>
         </div>
-        <div className={styles.statusChip}>Growing database / Real-time</div>
+        <div className={styles.statusChip}>
+          {backendStatus === 'live' ? 'Backend mode / Live' : backendStatus === 'fallback' ? 'Fallback mode / Local cache' : 'Checking backend...'}
+        </div>
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
